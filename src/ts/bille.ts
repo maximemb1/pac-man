@@ -57,6 +57,6 @@ class Bille {
 
 export const billes = [new Bille(50, 50, 75, "rgb(255,255,100)", 5)];
 
-for (let i=1; i<20; i++){
-    billes.push(new Bille(20*i/2, 20*i/4, 75, "rgb(255,255,100)", 5))
+for (let i=1; i<40; i++){
+    billes.push(new Bille(20*i/2, 20*i/3, 75, "rgb(255,255,100)", 5))
 }
