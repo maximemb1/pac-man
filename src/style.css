@@ -1,0 +1,173 @@
+@font-face{
+  font-family: 'crackman';
+  src: url('assets/crackman/Crackman.otf') format(opentype);
+}
+
+:root {
+  /* Fond */
+  --bg1: rgb(5, 8, 20);
+  --bg2: rgb(15, 19, 45);
+  --bg3: rgb(25, 8, 55);
+
+  /* Jeu */
+  --wall: rgb(38, 73, 255);
+  --wall-glow: rgb(72, 105, 255);
+
+  /* Pac-Man */
+  --pacman: rgb(255, 221, 48);
+
+  /* Fantômes */
+  --danger: rgb(255, 55, 90);
+  --danger-dark: rgb(180, 25, 65);
+
+  /* Bonus */
+  --boost: rgb(0, 240, 210);
+  --boost-glow: rgb(80, 255, 235);
+
+  /* Texte */
+  --text: rgb(245, 245, 255);
+  --text-muted: rgb(150, 155, 190);
+
+  /* Interface */
+  --ui: rgb(20, 25, 60);
+  --ui-border: rgb(65, 80, 180);
+}
+
+*{
+  padding: 0;
+  margin: 0; 
+}
+
+body{
+  background: no-repeat radial-gradient(circle at center,var(--bg3), var(--bg2), var(--bg1));
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+canvas{
+  height: 600px;
+  width: 600px;
+  background: rgba(56, 57, 121, 0.157);
+}
+
+button{
+  font-size: clamp(1.2rem, 5vw, 3rem);
+}
+h1{
+  font-family: 'crackman';
+  font-size: clamp(2.2rem, 7vw, 4rem);
+  color: var(--pacman);
+  text-shadow: 0 0 3px var(--pacman), 0 0 2px var(--pacman);
+}
+
+/* HOME */
+#home{
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 3rem;
+  margin: 1rem;
+}
+
+#titre{
+  font-size: clamp(2.5rem, 7.4vw, 4.5rem);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-250%);
+}
+/* btn home */
+.btn_jouer{
+  all: unset;
+  font-size: clamp(1.2rem, 3.2vw, 2.8rem);
+  margin-top: 50px;
+  padding: 14px 52px;
+  background: var(--ui);
+  color: var(--text-muted);
+  position: relative;
+  border-radius: 100px;
+  cursor: pointer;
+
+  box-shadow: 0 0 1px var(--wall);
+}
+.btn_jouer:hover > span {
+  color: var(--wall-glow);
+}
+.btn_jouer span{
+  position: relative;
+  z-index: 1;
+  font-family: 'crackman';
+}
+@property --angle{
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+.btn_jouer::before{
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background-color: inherit;
+  border-radius: inherit;
+  background-image: conic-gradient(
+    from var(--angle),
+    transparent 0%,
+    transparent 30%,
+    var(--pacman) 80%,
+    transparent 70%,
+    transparent 100%
+  );
+
+  z-index: -1;
+  animation: rotate 3s linear infinite;
+  filter: blur(4px);
+}
+.btn_jouer::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--ui);
+
+  z-index: -1;
+}
+
+.btn_jouer:hover{
+  transform: scale(1.04);
+}
+.btn_jouer:active{
+  transform: scale(0.96);
+}
+
+@keyframes rotate {
+  0%{
+    --angle: 0deg;
+  }
+  100%{
+    --angle: 360deg;
+  }
+}
+/* fin btn home */
+
+/*GAME CONTAINER */
+/* #game{
+  
+} */
+
+
+/* OVERLAY */
+#overlay{
+  display: none;
+}
+
+/* ECRAN */
+.visible{
+  display: flex;
+}
+
+.hidden{
+  display: none;
+}

@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+    <head>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <link rel="icon" type="image/svg+xml" href="src/assets/vite.svg" />
+    <link rel="stylesheet" href="src/style.css" />
+    <title>pac-man</title>
+
+  </head>
+    
+    <body>
+
+      <section class="visible" id="home">
+
+        <h1 id="titre">Pac Man</h1>
+
+        <button class="btn_jouer" id="btn_jouer">
+          <span>JOUER</span>
+        </button>
+
+      </section>
+
+      <section class="hidden" id="game">
+
+        <canvas id="cvs"></canvas>
+
+      </section>
+
+      <section id="overlay">
+         
+      </section> 
+
+       <script type="module" src="/src/ts/main.ts"></script>
+    </body>
+
+</html>
