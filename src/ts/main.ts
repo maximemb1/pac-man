@@ -6,6 +6,7 @@ import {declenche_jeu} from "./interfaces";
 import {pacman} from "./pacman";
 import {billes} from "./bille";
 import { player } from "./Player";
+import { fantomes } from "./fantome";
 
 // * btn jouer *
 declenche_jeu();
@@ -15,6 +16,10 @@ function gameloop(){
     ctx.clearRect(0, 0, cvs.width, cvs.height);
 
     pacman.update();
+
+    fantomes.forEach((fantome) => {
+        fantome.update();
+    });
 
     billes.forEach( (bille) => {
         bille.update();
