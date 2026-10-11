@@ -3,9 +3,10 @@
 export const cvs = document.getElementById("cvs") as HTMLCanvasElement;
 cvs.width = 600;
 cvs.height = 600;
-console.log(cvs.width, cvs.height)
 
 export const ctx = cvs.getContext("2d") as CanvasRenderingContext2D;
+
+export const etat_jeu = {actif: false, pause: false};
 
 // ** ELEMENTS HTML **
 export const sect_home = document.getElementById("home") as HTMLElement;

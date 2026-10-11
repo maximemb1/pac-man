@@ -1,7 +1,7 @@
 // *** INTERFACE ***
-import {elmt_html} from "./variables";
+import { elmt_html} from "./variables";
 
-function ecran(ecran: string) {
+export function ecran(ecran: string) {
 
     switch (ecran) {
 
@@ -11,7 +11,6 @@ function ecran(ecran: string) {
 
             elmt_html.game.classList.add("hidden");
             elmt_html.game.classList.remove("visible");
-            console.log("home");
             break;
 
         case "game":
@@ -21,14 +20,9 @@ function ecran(ecran: string) {
             elmt_html.home.classList.remove("visible");
             elmt_html.home.classList.add("hidden");
 
-            console.log("game");
             break;
     }
 }
 
-
-export const declenche_jeu = () => { elmt_html.btn_jouer.addEventListener("click", () => {
-    ecran("game");
-}) };
 
 ecran("home");

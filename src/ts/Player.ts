@@ -9,7 +9,6 @@ export class Player {
 
     aug_score(score: number) {
         this.score += score;
-        console.log(this.score)
     }
 
     perd_vie() {

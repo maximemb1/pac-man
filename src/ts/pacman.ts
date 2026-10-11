@@ -1,9 +1,11 @@
 // *** PAC MAN ***
 import {cvs, ctx} from "./variables";
+import { map1, TAILLE_CASE } from "./map";
 
 export class Pacman {
     x: number;
     y: number;
+    last_position: number[];
     speed: number;
     direction: "droite" | "gauche" | "haut" | "bas";
     size: number;
@@ -13,8 +15,9 @@ export class Pacman {
     color: string;
 
     constructor(color: string) {
-        this.x = 20;
+        this.x = 50;
         this.y = 200;
+        this.last_position = [this.x,this.y];
         this.speed = 1.5;
         this.direction = "droite";
         this.size = 12;
@@ -97,8 +100,41 @@ export class Pacman {
         if (this.y + this.size > cvs.height) this.y = cvs.height - this.size;
     }
 
+    colision_mur(map:number[][]): boolean{
+        for (let i=0; i < map.length; i++){
+            for (let j=0; j < map[i].length; j++){
+                if (map[i][j] === 0) continue;
+
+                const murX = j * TAILLE_CASE;
+                const murY = i * TAILLE_CASE;
+
+                const coteProcheX = Math.max(murX, Math.min(this.x, murX+TAILLE_CASE));
+                const coteProcheY = Math.max(murY, Math.min(this.y, murY+TAILLE_CASE));
+
+                const dx = this.x - coteProcheX;
+                const dy = this.y - coteProcheY;
+
+                if (dx**2 + dy**2 < this.size**2){
+                    // => colision
+                    return true;
+                }
+                
+            }
+        }
+        return false;
+    }
+
     update(){
+        this.last_position = [this.x, this.y];
+
         this.deplacement();
+
+        if (this.colision_mur(map1)){
+            this.x = this.last_position[0];
+            this.y = this.last_position[1];
+            this.speed = 0;
+        };
+
         this.colision_cvs();
         this.animation();
         this.draw(ctx);
