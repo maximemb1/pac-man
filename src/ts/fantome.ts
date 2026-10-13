@@ -85,7 +85,7 @@ class Fantome{
 export const fantomes = [new Fantome(50, 300, 22, 1.2,"rgb(1, 32, 72)")];
 
 for (let i=1; i <= 3; i++){
-    fantomes.push(new Fantome(200*i/2,200*i/2, 22, 0.5+i/6,"rgb(72, 1, 1)"));
+    fantomes.push(new Fantome(200*i/2,200*i/2, 22, 0.5+i/6,`rgb(${72+i*20}, 1, 1)`));
 }
 
 // *** CALCUL DISTANCE entre FANTOME et PAC MAN ***
