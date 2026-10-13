@@ -2,12 +2,14 @@
 import {cvs, ctx} from "./variables";
 import { map1, TAILLE_CASE } from "./map";
 
+
 export class Pacman {
     x: number;
     y: number;
     last_position: number[];
     speed: number;
     direction: "droite" | "gauche" | "haut" | "bas";
+    pro_dir: "droite" | "gauche" | "haut" | "bas" | null;
     size: number;
     anim_direction: number;
     angleDir: number;
@@ -15,11 +17,12 @@ export class Pacman {
     color: string;
 
     constructor(color: string) {
-        this.x = 50;
-        this.y = 200;
+        this.x = 50+TAILLE_CASE/2;
+        this.y = 9*TAILLE_CASE +TAILLE_CASE/2;
         this.last_position = [this.x,this.y];
-        this.speed = 1.5;
+        this.speed = 2;
         this.direction = "droite";
+        this.pro_dir = null;
         this.size = 12;
         this.anim_direction = 1;
         this.angleDir = 0;
@@ -59,6 +62,7 @@ export class Pacman {
         ctx.fill();
     }
 
+
     deplacement(){
         if (this.direction === "droite")  this.x += this.speed;
         if (this.direction === "gauche") this.x -= this.speed;
@@ -69,30 +73,92 @@ export class Pacman {
     changement_direction() {
         document.addEventListener("keydown", (event) => {
             if (event.key === "ArrowRight") { 
-                this.direction = "droite";
-                this.angleDir = 0;
-                this.speed = 1.5;
+                this.pro_dir = "droite";
             };
             if (event.key === "ArrowLeft") {
-                this.direction = "gauche";
-                this.angleDir = Math.PI;
-                this.speed = 1.5;
+                this.pro_dir = "gauche";
             }
             if (event.key === "ArrowUp") {
-                this.direction = "haut";
-                this.angleDir = -Math.PI/2;
-                this.speed = 1.5;
+                this.pro_dir = "haut";
             }
             if (event.key === "ArrowDown") {
-                this.direction = "bas";
-                this.angleDir = Math.PI/2;
-                this.speed = 1.5;
+                this.pro_dir = "bas";
             }
         });
     }
 
+    peut_tourner(map: number[][], dir_demande: "droite" | "gauche" | "haut" | "bas" |null): boolean {
+        const col = Math.floor(this.x / TAILLE_CASE);
+        const ligne = Math.floor(this.y / TAILLE_CASE);
+        let pro_col = col;
+        let pro_ligne = ligne;
+
+        if (dir_demande === "droite") pro_col++;
+        if (dir_demande === "gauche") pro_col--;
+        if (dir_demande === "haut") pro_ligne--;
+        if (dir_demande === "bas") pro_ligne++;
+
+        // case existe ?
+        if (pro_ligne < 0 || pro_ligne >= map.length || pro_col < 0 || pro_col >= map[pro_ligne].length) return false;
+
+        return map[pro_ligne][pro_col] === 0;
+    }
+    tourner(map: number[][]){
+        if (this.pro_dir === null) return;
+        if (!this.franchit_centre()) return;
+       
+        if (!this.peut_tourner(map, this.pro_dir)) return;
+            
+            this.alignement_case();
+            
+            this.direction = this.pro_dir;
+
+            if (this.direction === "droite") { 
+                    this.angleDir = 0;
+            };
+            if (this.direction === "gauche") {
+                    this.angleDir = Math.PI;
+            }
+            if (this.direction === "haut") {
+                    this.angleDir = -Math.PI/2;
+            }
+            if (this.direction === "bas") {
+                    this.angleDir = Math.PI/2;
+            }
+            this.pro_dir = null;
+    }
+    franchit_centre(): boolean {
+        const centreX = Math.floor(this.x / TAILLE_CASE) * TAILLE_CASE + TAILLE_CASE/2;
+        const centreY = Math.floor(this.y / TAILLE_CASE) * TAILLE_CASE + TAILLE_CASE/2;
+
+        if (this.direction === "droite"){
+            return this.x <= centreX && this.x + this.speed >= centreX;
+        }
+        if( this.direction === "gauche"){
+            return this.x >= centreX && this.x - this.speed <= centreX;
+        }
+        if (this.direction === "bas"){
+            return this.y <= centreY && this.y + this.speed >= centreY;
+        }
+        
+        return this.y >= centreY && this.y - this.speed <= centreY;
+    }
+    alignement_case() {
+        const centreX =
+            Math.round((this.x - TAILLE_CASE / 2) / TAILLE_CASE)
+            * TAILLE_CASE + TAILLE_CASE / 2;
+
+        const centreY =
+            Math.round((this.y - TAILLE_CASE / 2) / TAILLE_CASE)
+            * TAILLE_CASE + TAILLE_CASE / 2;
+
+        this.x = centreX;
+        this.y = centreY;
+    }
+
+
+
     colision_cvs(){
-        if (this.x + this.size > cvs.width || this.x - this.size < 0 || this.y - this.size < 0 || this.y + this.size > cvs.height) this.speed = 0;
 
         if (this.x + this.size > cvs.width) this.x = cvs.width - this.size;
         if (this.x - this.size < 0) this.x = this.size;
@@ -125,6 +191,8 @@ export class Pacman {
     }
 
     update(){
+        this.tourner(map1);
+
         this.last_position = [this.x, this.y];
 
         this.deplacement();
@@ -132,7 +200,6 @@ export class Pacman {
         if (this.colision_mur(map1)){
             this.x = this.last_position[0];
             this.y = this.last_position[1];
-            this.speed = 0;
         };
 
         this.colision_cvs();

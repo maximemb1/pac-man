@@ -1,4 +1,18 @@
 // *** VARIABLES ***
+// ** Types et interfaces **
+export interface Dico {
+    [cle: string]: string | number;
+}
+export type Point = {
+    x: number;
+    y: number;
+}
+export type Distances = {
+    dx: number;
+    dy:number;
+    d: number;
+}
+
 
 export const cvs = document.getElementById("cvs") as HTMLCanvasElement;
 cvs.width = 600;

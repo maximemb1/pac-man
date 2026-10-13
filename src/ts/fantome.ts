@@ -1,6 +1,7 @@
 // *** FANTOME ***
 import { ctx, cvs } from "./variables";
 import { Pacman, pacman } from "./pacman";
+import { distance2points } from "./utile";
 
 class Fantome{
     x: number;
@@ -85,24 +86,5 @@ class Fantome{
 export const fantomes = [new Fantome(50, 300, 22, 1.2,"rgb(1, 32, 72)")];
 
 for (let i=1; i <= 3; i++){
-    fantomes.push(new Fantome(200*i/2,200*i/2, 22, 0.5+i/6,"rgb(72, 1, 1)"));
-}
-
-// *** CALCUL DISTANCE entre FANTOME et PAC MAN ***
-type Point = {
-    x: number;
-    y: number;
-}
-type Distances = {
-    dx: number;
-    dy:number;
-    d: number;
-}
-
-function distance2points(p1: Point,p2: Point): Distances{
-    let dx = p2.x - p1.x;
-    let dy = p2.y - p1.y;
-    let d = (dx**2 + dy**2)**0.5;
-
-    return {dx, dy, d};
+    fantomes.push(new Fantome(200*i/2,200*i/2, 22, 0.5+i/6,`rgb(${72+i*5}, ${i*5}, ${i*15+35})`));
 }
