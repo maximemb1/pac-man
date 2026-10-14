@@ -1,4 +1,4 @@
-###Pac Man
+#Pac Man
 
 ##Structure du projet
 ```text
