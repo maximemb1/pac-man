@@ -1,6 +1,6 @@
-#Pac Man
+# Pac Man
 
-##Structure du projet
+## Structure du projet
 ```text
 src/                
 |-- assets/            Polices, images
