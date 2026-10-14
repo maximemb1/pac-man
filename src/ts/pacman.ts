@@ -190,6 +190,7 @@ export class Pacman {
         return false;
     }
 
+
     update(){
         this.tourner(map1);
 
@@ -206,6 +207,22 @@ export class Pacman {
         this.animation();
         this.draw(ctx);
     }
+
+
+// **** Modif sur tel ****
+colision_fantome(f){
+if (this.x < f.x+f.size && this.y === f.y)
+// Mauvais je pense 
+// Mieux avec position 
+const centreX = Math.floor(this.x / TAILLE_CASE) * TAILLE_CASE + TAILLE_CASE/2;
+const centreY = Math.floor(this.y /TAILLE_CASE) * TAILLE_CASE +TAILLE_CASE/2;
+
+const f_centreX = Math.floor(f.x / TAILLE_CASE) * TAILLE_CASE +TAILLE_CASE/2;
+const f_centreY = Math.floor(f.y/TAILLE_CASE) * TAILLE_CASE +TAILLE_CASE/2;
+
+if ((centreX < f_centreX && centreY === f_centreY ) || (centreX > f_centreX && centreY === f_centreY)){
+return true;
+}
 }
 
 
