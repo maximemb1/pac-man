@@ -7,7 +7,7 @@ import {pacman} from "./pacman";
 import {billes} from "./bille";
 import { player } from "./Player";
 import { fantomes } from "./fantome";
-import { map1, draw_map } from "./map";
+import { Map, draw_map } from "./map";
 
 // * btn jouer *
 const declenche_jeu = () => { elmt_html.btn_jouer.addEventListener("click", () => {
@@ -23,7 +23,11 @@ function gameloop(){
     if (!etat_jeu.actif) return;
     ctx.clearRect(0, 0, cvs.width, cvs.height);
 
-    draw_map(map1);
+    draw_map(Map);
+    
+    billes.forEach( (bille) => {
+        bille.update();
+    });
     
     pacman.update();
 
@@ -31,9 +35,6 @@ function gameloop(){
         fantome.update();
     });
 
-    billes.forEach( (bille) => {
-        bille.update();
-    });
 
     player.defaite();
 

@@ -1,5 +1,5 @@
 // *** Utils ***
-
+import { TAILLE_CASE } from "./map";
 import type { Dico, Point, Distances } from "./variables";
 
 // ** Pas sur mur **
@@ -26,4 +26,27 @@ export function distance2points(p1: Point,p2: Point): Distances{
     let d = (dx**2 + dy**2)**0.5;
 
     return {dx, dy, d};
+}
+
+// *** Centre CASE ***
+export function centre_case(col: number, ligne: number): { x: number; y: number } {
+    return {
+        x: col * TAILLE_CASE + TAILLE_CASE / 2,
+        y: ligne * TAILLE_CASE + TAILLE_CASE / 2
+    };
+}
+
+// *** Opposé des directions ***
+export function oppose_dir(dir: "droite"|"gauche"|"haut"|"bas"): "droite"|"gauche"|"haut"|"bas"{
+    if (dir === "droite") return "gauche"
+    if (dir === "gauche") return "droite";
+
+    if (dir === "haut") return "bas";
+    return "haut";
+}
+
+// *** Savoir Axe ***
+export function axe_deplacement(dir: "droite"|"gauche"|"haut"|"bas"): "x"|"y"{
+    if (dir === "gauche" || dir === "droite") return "x";
+     return "y";
 }

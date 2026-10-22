@@ -1,6 +1,8 @@
 // *** PAC MAN ***
 import {cvs, ctx} from "./variables";
-import { map1, TAILLE_CASE } from "./map";
+import { Map, TAILLE_CASE } from "./map";
+import {Fantome, fantomes} from "./fantome"
+import { player } from "./Player";
 
 
 export class Pacman {
@@ -15,10 +17,12 @@ export class Pacman {
     angleDir: number;
     ouverture_bouche: number;
     color: string;
+    invincible: boolean;
+    dbt_invincible: number;
 
     constructor(color: string) {
-        this.x = 50+TAILLE_CASE/2;
-        this.y = 9*TAILLE_CASE +TAILLE_CASE/2;
+        this.x = 25+TAILLE_CASE/2;
+        this.y = TAILLE_CASE +TAILLE_CASE/2;
         this.last_position = [this.x,this.y];
         this.speed = 2;
         this.direction = "droite";
@@ -28,6 +32,8 @@ export class Pacman {
         this.angleDir = 0;
         this.ouverture_bouche = 0.2 * Math.PI;
         this.color = color ? color : "rgb(255,221,58)";
+        this.invincible = false;
+        this.dbt_invincible = 0;
     }
 
     animation() {
@@ -62,6 +68,21 @@ export class Pacman {
         ctx.fill();
     }
 
+    prend_invincibilite(){
+        this.invincible = true;
+        this.dbt_invincible = Date.now();
+        this.color = "rgba(154,194,227,0.85)";
+        console.log("INVINCIBLE")
+    }
+    perd_invincibilite(){
+        const fin = 5000;
+
+        if (Date.now() - this.dbt_invincible >= fin){
+            this.invincible = false;
+            this.color = "rgb(255,221,58)";
+            console.log("PLUS invincible")
+        }
+    }
 
     deplacement(){
         if (this.direction === "droite")  this.x += this.speed;
@@ -144,13 +165,9 @@ export class Pacman {
         return this.y >= centreY && this.y - this.speed <= centreY;
     }
     alignement_case() {
-        const centreX =
-            Math.round((this.x - TAILLE_CASE / 2) / TAILLE_CASE)
-            * TAILLE_CASE + TAILLE_CASE / 2;
+        const centreX = Math.round((this.x - TAILLE_CASE / 2) / TAILLE_CASE) * TAILLE_CASE + TAILLE_CASE / 2;
 
-        const centreY =
-            Math.round((this.y - TAILLE_CASE / 2) / TAILLE_CASE)
-            * TAILLE_CASE + TAILLE_CASE / 2;
+        const centreY = Math.round((this.y - TAILLE_CASE / 2) / TAILLE_CASE)* TAILLE_CASE + TAILLE_CASE / 2;
 
         this.x = centreX;
         this.y = centreY;
@@ -167,8 +184,14 @@ export class Pacman {
     }
 
     colision_mur(map:number[][]): boolean{
-        for (let i=0; i < map.length; i++){
-            for (let j=0; j < map[i].length; j++){
+        const ligne: number = Math.floor(this.y / TAILLE_CASE);
+        const col: number = Math.floor(this.x / TAILLE_CASE);
+
+        for (let i= ligne-2; i <= ligne  + 2; i++){
+            for (let j= col -2; j <= col +2; j++){
+                // case existe ?
+                if (i<0 || i >= map.length || j<0 || j>= map[i].length) continue;
+
                 if (map[i][j] === 0) continue;
 
                 const murX = j * TAILLE_CASE;
@@ -183,32 +206,61 @@ export class Pacman {
                 if (dx**2 + dy**2 < this.size**2){
                     // => colision
                     return true;
-                }
-                
+                }  
             }
         }
         return false;
     }
 
+    colision_fantome(f: Fantome){
+        const centreX = this.x;
+        const centreY = this.y;
+
+        //lim rect fantome
+        const gauche = f.x;
+        const droite = f. x+ f.size;
+        const haut = f.y;
+        const bas = f.y+f.size;
+        // point + proche de PM
+        const procheX = Math.max(gauche, Math.min(centreX, droite)); // savoir si PM est entre le point G et le point D
+        const procheY = Math.max(haut, Math.min(centreY, bas));      // idem pour Haut et Bas
+
+        // distance
+        const dx = centreX - procheX;
+        const dy = centreY - procheY;
+        const d = dx**2 + dy**2 + 30;
+        
+
+        if (d < this.size**2 && !this.invincible){
+            player.perd_vie();
+            this.prend_invincibilite();
+        }
+    }
+
     update(){
-        this.tourner(map1);
+        this.tourner(Map);
 
         this.last_position = [this.x, this.y];
 
         this.deplacement();
 
-        if (this.colision_mur(map1)){
+        if (this.colision_mur(Map)){
             this.x = this.last_position[0];
             this.y = this.last_position[1];
         };
+
+        for (const f of fantomes){
+            this.colision_fantome(f);
+        }
+        if (this.invincible){
+            this.perd_invincibilite();
+        }
 
         this.colision_cvs();
         this.animation();
         this.draw(ctx);
     }
 }
-
-
 
 export const pacman = new Pacman("rgb(255,221,58)");
 

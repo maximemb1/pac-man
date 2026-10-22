@@ -2,11 +2,11 @@
 import { ctx} from "./variables";
 import {pacman, Pacman} from "./pacman";
 import { player } from "./Player";
-import { map1, TAILLE_CASE } from "./map";
+import { Map, TAILLE_CASE } from "./map";
 import { position_libre } from "./utile";
 
 
-class Bille {
+export class Bille {
     x: number;
     y: number;
     pts: number;
@@ -47,6 +47,7 @@ class Bille {
         if (distance < this.size + pacman.size && !this.recup) {
 
             player.aug_score(this.pts);
+            player.victoire();
             this.recup = true;
         };
     }
@@ -60,12 +61,16 @@ class Bille {
 
 
 // ** Création billes **
-export const billes = [new Bille(50, 50, 75, "rgb(255,255,100)", 5)];
+export const billes: Bille[] = [];
 
-const posi_libre = position_libre(map1);
+const posi_libre = position_libre(Map);
 
 for (const item of posi_libre) {
     const x = Number(item.x);
     const y = Number(item.y);
     billes.push(new Bille(x*TAILLE_CASE+TAILLE_CASE/2, y*TAILLE_CASE+TAILLE_CASE/2, 75, "rgb(255,255,100)", 5));
 }
+
+console.log(billes.length)
+
+//new Bille(50, 50, 75, "rgb(255,255,100)", 5)
