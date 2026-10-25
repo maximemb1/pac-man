@@ -7,7 +7,7 @@ import {pacman} from "./pacman";
 import {billes, boosts, creation_bille, creation_boost} from "./bille";
 import { player } from "./Player";
 import { fantomes, place_fantome } from "./fantome";
-import { draw_map, get_map, change_map, Map } from "./map";
+import { draw_map, change_map, Map } from "./map";
 
 
 // * btn jouer *
@@ -76,7 +76,7 @@ const remetA0 = () => {
 
     billes.splice(0,billes.length);
     boosts.splice(0,boosts.length);
-    
+
     console.log("MAAAAP")
     change_map();
    
