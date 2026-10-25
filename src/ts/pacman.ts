@@ -1,6 +1,6 @@
 // *** PAC MAN ***
 import {cvs, ctx} from "./variables";
-import { Map, TAILLE_CASE } from "./map";
+import { TAILLE_CASE, Map } from "./map";
 import {Fantome, fantomes} from "./fantome"
 import { player } from "./Player";
 
@@ -19,6 +19,7 @@ export class Pacman {
     color: string;
     invincible: boolean;
     dbt_invincible: number;
+    booste:boolean;
 
     constructor(color: string) {
         this.x = 25+TAILLE_CASE/2;
@@ -34,6 +35,7 @@ export class Pacman {
         this.color = color ? color : "rgb(255,221,58)";
         this.invincible = false;
         this.dbt_invincible = 0;
+        this.booste = false;
     }
 
     animation() {
@@ -72,16 +74,22 @@ export class Pacman {
         this.invincible = true;
         this.dbt_invincible = Date.now();
         this.color = "rgba(154,194,227,0.85)";
-        console.log("INVINCIBLE")
     }
-    perd_invincibilite(){
-        const fin = 5000;
+    perd_invincibilite_boost(timer:number){
+        const fin = timer;
 
         if (Date.now() - this.dbt_invincible >= fin){
-            this.invincible = false;
+
+            if (this.invincible) this.invincible = false;
+            if (this.booste) this.booste = false;
+
             this.color = "rgb(255,221,58)";
-            console.log("PLUS invincible")
         }
+    }
+    prend_booste() {    
+        this.booste = true;    
+        this.dbt_invincible = Date.now();
+        this.color = "rgb(255, 124, 1)";
     }
 
     deplacement(){
@@ -98,13 +106,13 @@ export class Pacman {
             };
             if (event.key === "ArrowLeft") {
                 this.pro_dir = "gauche";
-            }
+            };
             if (event.key === "ArrowUp") {
                 this.pro_dir = "haut";
-            }
+            };
             if (event.key === "ArrowDown") {
                 this.pro_dir = "bas";
-            }
+            };
         });
     }
 
@@ -230,11 +238,27 @@ export class Pacman {
         const dy = centreY - procheY;
         const d = dx**2 + dy**2 + 30;
         
-
+    
         if (d < this.size**2 && !this.invincible){
-            player.perd_vie();
-            this.prend_invincibilite();
+            if (!this.booste){
+                player.perd_vie();
+                this.prend_invincibilite();
+            }
+            else {
+                player.aug_score(400);
+                // respawn_fantome
+            }
         }
+    }
+    remet_a_0(){
+        this.booste = false;
+        this.invincible = false;
+        this.color = "rgb(255,221,58)";
+        this.x = TAILLE_CASE+TAILLE_CASE/2;
+        this.y = TAILLE_CASE+TAILLE_CASE/2;
+        this.last_position = [this.x, this.y];
+
+
     }
 
     update(){
@@ -253,7 +277,11 @@ export class Pacman {
             this.colision_fantome(f);
         }
         if (this.invincible){
-            this.perd_invincibilite();
+            this.perd_invincibilite_boost(5000);
+        }
+
+        if (this.booste){
+            this.perd_invincibilite_boost(7000);
         }
 
         this.colision_cvs();
@@ -265,5 +293,3 @@ export class Pacman {
 export const pacman = new Pacman("rgb(255,221,58)");
 
 pacman.changement_direction();
-
-// *** dans la class pacman reste a faire vrai deplacement + change orientation dessin + bcp d'autre trucs ***

@@ -1,13 +1,16 @@
 import { billes, Bille } from "./bille";
 import { etat_jeu } from "./variables";
+import { ecran } from "./interfaces";
 
 export class Player {
     score: number;
     vie: number;
+    m_score: number;
 
     constructor() {
         this.score = 0;
         this.vie = 3;
+        this.m_score = 0;
     }
 
     aug_score(score: number) {
@@ -18,13 +21,18 @@ export class Player {
         this.vie--;
     }
 
+    nouv_m_score(){
+        if (this.score > this.m_score) this.m_score = this.score
+    }
+
     defaite() {
-        if (this.vie <= 0){
-            // affichage ...
-            console.log("perdu")
-            etat_jeu.actif = false;
-            return true;
-        }
+        if (this.vie > 0) return;
+
+        console.log("perdu")
+        etat_jeu.actif = false;
+        this.nouv_m_score();
+
+        ecran("go");
     }
 
     victoire(){
@@ -38,7 +46,11 @@ export class Player {
             etat_jeu.actif = false;
             // affichage...
         }
-        
+    }
+
+    remet_a_0(){
+        this.score = 0;
+        this.vie = 3;
     }
 }
 

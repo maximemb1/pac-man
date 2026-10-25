@@ -2,7 +2,7 @@
 import { ctx } from "./variables";
 import { Pacman, pacman } from "./pacman";
 import { distance2points, oppose_dir } from "./utile";
-import { Map,TAILLE_CASE, current_map_index } from "./map";
+import { TAILLE_CASE, current_map_index, Map } from "./map";
 
 export class Fantome{
     static prochainId = 0;
@@ -69,60 +69,23 @@ export class Fantome{
 
 
     // **** IA deplacement ****
-    choix_dir(pac: Pacman): "gauche" | "droite" | "haut" | "bas"{
-        const {dx,dy,d} = distance2points({x:this.x,y:this.y}, {x:pac.x-pac.size,y:pac.y-pac.size});
+    choix_dir(pac: Pacman):{direction:"gauche" | "droite" | "haut" | "bas", score:number}[]{
+        const {dx,dy,d} = distance2points({x:this.x,y:this.y}, {x:pac.x, y:pac.y});
         
         if (d !== 0){
         
             if (Math.abs(dx) < Math.abs(dy)){
-                if (dx/d < 0) return "gauche";
-                else return "droite";
+                if (dx/d < 0) return [{direction: "gauche", score: 100},{direction: "droite", score: 75},{direction: "haut", score: 50},{direction: "bas", score: 25}];
+                else return [{direction: "droite", score: 100},{direction: "gauche", score: 75},{direction: "bas", score: 50},{direction: "haut", score: 25}];
             }
             else {
-                if (dy/d < 0) return "haut";
-                else return "bas";
+                if (dy/d < 0) return [{direction: "haut", score: 100},{direction: "bas", score: 75},{direction: "droite", score: 50},{direction: "gauche", score: 25}];
+                else return [{direction: "bas", score: 100},{direction: "haut", score: 75},{direction: "gauche", score: 50},{direction: "droite", score: 25}];
             }  
         }
-        return "droite";
+        return [{direction: "droite", score: 100},{direction: "gauche", score: 75},{direction: "bas", score: 50},{direction: "haut", score: 25}];
     }
-    change_dir(map: number[][]) {
-        const directions: ("gauche" | "droite" | "haut" | "bas")[] = ["gauche", "droite", "haut", "bas"];
-
-        const possibles: ("gauche" | "droite" | "haut" | "bas")[] = [];
-
-        for (const dir of directions) {
-            // Tester un petit déplacement dans cette direction
-            const ancienX = this.x;
-            const ancienY = this.y;
-
-            if (dir === "gauche") this.x -= this.speed;
-            if (dir === "droite") this.x += this.speed;
-            if (dir === "haut") this.y -= this.speed;
-            if (dir === "bas") this.y += this.speed;
-
-            if (!this.colision_mur(map)) {
-                possibles.push(dir);
-            }
-
-            // Restaurer la position après le test
-            this.x = ancienX;
-            this.y = ancienY;
-        }
-
-        if (possibles.includes(this.choix_dir(pacman))){
-            // Augmente chance de se repprocher de pacman
-            possibles.push(this.choix_dir(pacman));
-            possibles.push(this.choix_dir(pacman));
-            possibles.push(this.choix_dir(pacman));
-            possibles.push(this.choix_dir(pacman));
-        }
-
-        if (possibles.length > 0) {
-            this.dir = possibles[Math.floor(Math.random() * possibles.length)];
-        }
-    }
-
-    // Vérifie si le fantôme franchit le centre de la case courante sur son axe de déplacement
+        // Vérifie si le fantôme franchit le centre de la case courante sur son axe de déplacement
     franchit_centre(col: number, ligne: number): boolean {
         const centreX = col * TAILLE_CASE + TAILLE_CASE / 2;
         const centreY = ligne * TAILLE_CASE + TAILLE_CASE / 2;
@@ -165,10 +128,10 @@ export class Fantome{
     }
     choisir_dir(): ("haut"|"bas"|"gauche"|"droite"){
         const dir_accessible: ("haut"|"bas"|"gauche"|"droite")[] = this.repere_intersection(Map);
-        const dir_pref: ("haut"|"bas"|"gauche"|"droite") = this.choix_dir(pacman);
+    //   const dir_pref: {direction:"gauche" | "droite" | "haut" | "bas", score:number}[] = this.choix_dir(pacman);
 
+        // Enleve direction qui mene a un mur
         const direction_testees = dir_accessible.filter(direct => {
-            // Tester un petit déplacement dans cette direction
             const ancienX = this.x;
             const ancienY = this.y;
 
@@ -188,17 +151,36 @@ export class Fantome{
         
         if (direction_testees.length === 0) return this.dir;
 
-        const oppose = oppose_dir(this.dir);
-
+        const oppose = oppose_dir(this.dir); 
         // evite demi-tour
         const sans_oppose = direction_testees.filter(dir => dir !== oppose);
         // sans_oppose vide ? => fait demi-tour
         const directions_restante = sans_oppose.length > 0 ? sans_oppose : dir_accessible;
 
+        // Trouver meilleur direction
+        let meilleureDir = directions_restante[0];
+        let plusCourteDistance = Infinity;
 
-        if (directions_restante.includes(dir_pref)) return dir_pref;
+        for (const direct of directions_restante){
+            let testX = this.x;
+            let testY = this.y;
 
-        return directions_restante[Math.floor(Math.random()*directions_restante.length)]
+            if (direct === "gauche") testX -= this.speed;
+            if (direct === "droite") testX += this.speed;
+            if (direct === "haut") testY -= this.speed;
+            if (direct === "bas") testY += this.speed;
+
+            // distance vers PM
+            const {d} = distance2points({x:testX, y:testY},{x:pacman.x,y:pacman.y});
+
+            if (d < plusCourteDistance){
+                plusCourteDistance = d;
+                meilleureDir = direct;
+            }
+        }
+
+        if (Math.random() < 0.11) return directions_restante[Math.floor( Math.random()*directions_restante.length )]
+        return meilleureDir;
     }
 
     suivre(){
@@ -245,7 +227,7 @@ export class Fantome{
         // Si on est à une intersection ET qu'on franchit le centre
         const directions_possibles = this.repere_intersection(Map);
         
-        if (directions_possibles.length >= 3 && this.franchit_centre(col, ligne)) {
+        if (directions_possibles.length >= 2 && this.franchit_centre(col, ligne)) {
             if (this.last_case_decision?.ligne !== ligne || this.last_case_decision?.col !== col) {
                 
                 // s'aligne au centre 
@@ -277,11 +259,12 @@ const couleurs_fantomes = [
     "rgb(1, 32, 72)",
     "rgb(8, 84, 22)",
     "rgb(88, 7, 15)",
-    "rgb(83, 80, 11)"
+    "rgb(83, 80, 11)",
+    "rgb(74, 10, 61)"
 ];
 
 export const posi_depart: { map: number; posi: { ligne: number[]; col: number[] } }[] = [
-    { map: 0, posi: { ligne: [21], col: [11, 12, 13] } },       // Map 3
+    { map: 0, posi: { ligne: [21,22], col: [11, 12, 13] } },        // Map 3
     { map: 1, posi: { ligne: [9, 10], col: [10, 11, 12, 13] } },    // Map 4
     { map: 2, posi: { ligne: [8, 9, 10], col: [10, 11, 12, 13] } }, // Map 5
     { map: 3, posi: { ligne: [8, 9, 10], col: [10, 11, 12, 13] } }  // Map 6
@@ -298,7 +281,7 @@ export const place_fantome = () => {
     const cols = config ? config.posi.col : [11, 12];
 
     // Crée 4 fantômes en répartissant leurs positions de départ dans la maison
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 5; i++) {
         const ligne = lignes[i % lignes.length];
         const col = cols[i % cols.length];
 

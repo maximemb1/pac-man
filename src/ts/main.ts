@@ -2,21 +2,34 @@
 
 // * importation des variables et fonctions nécessaires *
 import {cvs, ctx, etat_jeu, elmt_html} from "./variables";
-import {ecran} from "./interfaces";
+import {ecran, affiche_etat_jeu} from "./interfaces";
 import {pacman} from "./pacman";
-import {billes} from "./bille";
+import {billes, boosts, creation_bille, creation_boost} from "./bille";
 import { player } from "./Player";
-import { fantomes } from "./fantome";
-import { Map, draw_map } from "./map";
+import { fantomes, place_fantome } from "./fantome";
+import { draw_map, get_map, change_map, Map } from "./map";
+
 
 // * btn jouer *
-const declenche_jeu = () => { elmt_html.btn_jouer.addEventListener("click", () => {
-    ecran("game");
-    lancer_jeu();
-}) };
-
-declenche_jeu();
- 
+const declenche_jeu = () => { 
+    elmt_html.btn_jouer.onclick = () => {
+        console.log("Declenche jeu")
+        ecran("game");
+        remetA0();
+        creation_bille(Map);
+        creation_boost(Map);
+        lancer_jeu();
+    };
+    
+};
+elmt_html.btn_rejouer.onclick = () => {
+    console.log("REJOUer")
+        ecran("game");
+        remetA0();
+        creation_bille(Map);
+        creation_boost(Map);
+       lancer_jeu();
+    }; 
 
 // ** boucle jeu **
 function gameloop(){
@@ -28,6 +41,10 @@ function gameloop(){
     billes.forEach( (bille) => {
         bille.update();
     });
+
+    boosts.forEach(boost => {
+        boost.update();
+    });
     
     pacman.update();
 
@@ -38,6 +55,7 @@ function gameloop(){
 
     player.defaite();
 
+    affiche_etat_jeu();
     requestAnimationFrame(gameloop);
 }
 
@@ -47,3 +65,21 @@ function lancer_jeu(){
     gameloop();
 }
 
+const remetA0 = () => {
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+    player.remet_a_0();
+    pacman.remet_a_0();
+
+    fantomes.splice(0,fantomes.length);
+    place_fantome();
+
+    billes.splice(0,billes.length);
+    boosts.splice(0,boosts.length);
+    
+    console.log("MAAAAP")
+    change_map();
+   
+}
+
+declenche_jeu();

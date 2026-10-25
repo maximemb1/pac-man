@@ -23,9 +23,17 @@ export const ctx = cvs.getContext("2d") as CanvasRenderingContext2D;
 export const etat_jeu = {actif: false, pause: false};
 
 // ** ELEMENTS HTML **
-export const sect_home = document.getElementById("home") as HTMLElement;
-export const sect_game = document.getElementById("game") as HTMLElement;
+const sect_home = document.getElementById("home") as HTMLElement;
+const sect_game = document.getElementById("game") as HTMLElement;
+const overlay = document.getElementById("overlay") as HTMLElement;
 
-export const btn_jouer = document.getElementById("btn_jouer") as HTMLButtonElement;
+const btn_jouer = document.getElementById("btn_jouer") as HTMLButtonElement;
+const btn_rejouer = document.getElementById("btn_rejouer") as HTMLButtonElement;
 
-export const elmt_html = {home: sect_home, game: sect_game, btn_jouer: btn_jouer};
+const barre_etat = document.getElementById("barre_etat") as HTMLElement;
+
+const p_m_score = document.getElementById("p_m_score") as HTMLElement;
+const sect_go = document.getElementById("GO") as HTMLElement;
+
+export const elmt_html = {home: sect_home, game: sect_game, btn_jouer: btn_jouer, btn_rejouer: btn_rejouer,
+    etat: barre_etat, m_score: p_m_score, go: sect_go, overlay: overlay};

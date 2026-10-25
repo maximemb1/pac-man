@@ -27,7 +27,7 @@ export const map3: number[][] = [
     [1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1],
     [1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1],
     [1,0,0,0,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,0,0,0,1],
-    [1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,0,1],
+    [1,0,1,1,1,1,1,1,1,0,1,2,2,2,1,0,1,1,1,1,1,1,0,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
@@ -42,7 +42,7 @@ export const map4: number[][] = [
     [1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1,1,1],
     [1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1],
     [1,1,1,1,0,1,0,1,1,1,2,2,2,2,1,1,1,0,1,0,1,1,1,1],
-    [1,0,0,0,0,0,0,1,0,0,2,2,2,2,0,0,1,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0,0,0,0,1],
     [1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1],
     [1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1],
     [1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1],
@@ -110,20 +110,19 @@ export const map6: number[][] = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
-const maps: number[][][] = [map3,map4, map5, map6];
-
+export const maps: number[][][] = [map3,map4, map5, map6];
 
 export let current_map_index:number = 0;
 
-function get_map(map_list: number[][][]): number[][]{
+export function get_map(map_list: number[][][]): number[][]{
     current_map_index = Math.floor(Math.random() * map_list.length);
     console.log("Map index :", current_map_index);
     return map_list[current_map_index];
 }
 
-
-export const Map = get_map(maps);
-
+export const change_map = () => {
+    Map = get_map(maps);
+};
 
 export function draw_map(map: number[][]){
     for (let i=0; i < map.length; i++){
@@ -139,17 +138,19 @@ export function draw_map(map: number[][]){
         }
     }
     ctx.strokeStyle = "rgba(255,255,255,0.2)";
-ctx.lineWidth = 1;
+    ctx.lineWidth = 1;
 
-for (let i = 0; i <= Map.length; i++) {
-    ctx.beginPath();
-    ctx.moveTo(i * TAILLE_CASE, 0);
-    ctx.lineTo(i * TAILLE_CASE, cvs.height);
-    ctx.stroke();
+    for (let i = 0; i <= map.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * TAILLE_CASE, 0);
+        ctx.lineTo(i * TAILLE_CASE, cvs.height);
+        ctx.stroke();
 
-    ctx.beginPath();
-    ctx.moveTo(0, i * TAILLE_CASE);
-    ctx.lineTo(cvs.width, i * TAILLE_CASE);
-    ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, i * TAILLE_CASE);
+        ctx.lineTo(cvs.width, i * TAILLE_CASE);
+        ctx.stroke();
+    }
 }
-}
+
+export let Map: number[][] = get_map(maps);

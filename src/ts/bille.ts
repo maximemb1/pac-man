@@ -2,7 +2,7 @@
 import { ctx} from "./variables";
 import {pacman, Pacman} from "./pacman";
 import { player } from "./Player";
-import { Map, TAILLE_CASE } from "./map";
+import { maps, TAILLE_CASE } from "./map";
 import { position_libre } from "./utile";
 
 
@@ -58,19 +58,67 @@ export class Bille {
     }
 }
 
+export class BilleBoost extends Bille {
+    constructor(x: number, y: number, pts: number){
+        super(x, y, pts, "rgb(255,255,180)", 8);
+    }
+
+    colision_pacman(pacman: Pacman): void {
+        const dx = this.x - pacman.x;
+        const dy = this.y - pacman.y;
+        const distance = Math.sqrt(dx**2 + dy**2);
+
+        if (distance < this.size + pacman.size && !this.recup) {
+
+            player.aug_score(this.pts);
+            player.victoire();
+            this.recup = true;
+            pacman.prend_booste();
+        }
+    }
+}
 
 
 // ** Création billes **
 export const billes: Bille[] = [];
 
-const posi_libre = position_libre(Map);
+export const boosts: BilleBoost[] = [];
 
-for (const item of posi_libre) {
-    const x = Number(item.x);
-    const y = Number(item.y);
-    billes.push(new Bille(x*TAILLE_CASE+TAILLE_CASE/2, y*TAILLE_CASE+TAILLE_CASE/2, 75, "rgb(255,255,100)", 5));
+
+export const creation_bille = (Map: number[][]) => {
+    console.log(maps.indexOf(Map))
+    const posi_libre = position_libre(Map);
+
+    for (const item of posi_libre) {
+        const x = Number(item.x);
+        const y = Number(item.y);
+        billes.push(new Bille(x*TAILLE_CASE+TAILLE_CASE/2, y*TAILLE_CASE+TAILLE_CASE/2, 75, "rgb(255,255,100)", 5));
+    }
 }
 
-console.log(billes.length)
+export const creation_boost = (Map: number[][]) => {
+    const posi_libre = position_libre(Map);
 
+    let nbr_boost = 0;
+    for (const item of posi_libre){
+        if (nbr_boost <6 && Math.random() < 0.06){
+
+            const x = Number(item.x);
+            const y = Number(item.y);
+
+            if (boosts.length === 0){
+                boosts.push(new BilleBoost(x*TAILLE_CASE+TAILLE_CASE/2, y*TAILLE_CASE+TAILLE_CASE/2, 200));
+            }
+            else{
+                if (Math.abs((boosts[boosts.length-1].x-TAILLE_CASE/2)/TAILLE_CASE - x) >= 4 && Math.abs((boosts[boosts.length-1].y-TAILLE_CASE/2)/TAILLE_CASE - y) >= 4){
+                    console.log("NVL BILLE")
+                    nbr_boost++;
+                    boosts.push(new BilleBoost(x*TAILLE_CASE+TAILLE_CASE/2, y*TAILLE_CASE+TAILLE_CASE/2, 200));
+                }
+            }
+            
+
+        }
+    }
+}
 //new Bille(50, 50, 75, "rgb(255,255,100)", 5)
