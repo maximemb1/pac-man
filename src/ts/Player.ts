@@ -1,6 +1,7 @@
 import { billes, Bille } from "./bille";
 import { etat_jeu } from "./variables";
 import { ecran } from "./interfaces";
+import { continue_apres_victoire } from "./main";
 
 export class Player {
     score: number;
@@ -44,7 +45,8 @@ export class Player {
 
         if (billes_recup.length+1 >= billes.length){
             etat_jeu.actif = false;
-            // affichage...
+
+            continue_apres_victoire();
         }
     }
 

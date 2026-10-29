@@ -84,12 +84,22 @@ export class Pacman {
             if (this.booste) this.booste = false;
 
             this.color = "rgb(255,221,58)";
+
+            fantomes.forEach( (f) =>{
+                f.speed = 1.4;
+                f.etat = "normal";
+            } )
         }
     }
     prend_booste() {    
         this.booste = true;    
         this.dbt_invincible = Date.now();
         this.color = "rgb(255, 124, 1)";
+
+        fantomes.forEach( (f) =>{
+            f.speed = 1;
+            f.etat = "peur";
+        } )
     }
 
     deplacement(){
@@ -239,14 +249,14 @@ export class Pacman {
         const d = dx**2 + dy**2 + 30;
         
     
-        if (d < this.size**2 && !this.invincible){
-            if (!this.booste){
+        if (d < this.size**2){
+            if (!this.booste && !this.invincible){
                 player.perd_vie();
                 this.prend_invincibilite();
             }
-            else {
+            if (this.booste) {
                 player.aug_score(400);
-                // respawn_fantome
+                f.sEstFaitMange();
             }
         }
     }

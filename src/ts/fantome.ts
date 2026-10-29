@@ -2,7 +2,7 @@
 import { ctx } from "./variables";
 import { Pacman, pacman } from "./pacman";
 import { distance2points, oppose_dir } from "./utile";
-import { TAILLE_CASE, current_map_index, Map } from "./map";
+import { TAILLE_CASE, current_map_index, Map, maps } from "./map";
 
 export class Fantome{
     static prochainId = 0;
@@ -16,7 +16,11 @@ export class Fantome{
     dir: "gauche" | "droite" | "haut" | "bas";
     color: string;
 
-    cont_coli: number;
+    etat: "normal"|"mange"|"peur";
+    timer_mange: number;
+    duree_timer: number;
+    sorti_de_base: boolean;
+
 
     constructor(x:number, y: number, size: number, speed: number, color: string){
         this.id = Fantome.prochainId++;
@@ -28,8 +32,11 @@ export class Fantome{
         this.speed = speed;
         this.dir = "droite";
         this.color = color;
+        this.etat = "normal";
+        this.timer_mange = 0;
+        this.duree_timer = 0;
+        this.sorti_de_base = false;
 
-        this.cont_coli = 0;
     }
 
     // **** Draw ****
@@ -67,6 +74,49 @@ export class Fantome{
         this.draw_eye(ctx);
     }
 
+    // **** Global ****
+    savoir_etat(){
+        if (pacman.booste) this.etat = "peur";
+        else this.etat = "normal";
+    }
+    respawn(){
+        const position = place_fantome(1);
+        if (position) {
+            this.x = position.x;
+            this.y = position.y;
+            this.last_pos = [this.x, this.y];
+            this.sorti_de_base = false;
+            this.etat = "mange";
+        }
+    }
+    duree_aleatoire(): number{
+        let premier =  Math.random()*1000
+        this.duree_timer = premier >= 2500 ? premier : 4600;
+        return this.duree_timer;
+    }
+    mangee(){
+        if (this.etat !== "mange") return;
+
+        this.speed = 0;
+        this.timer_mange = setTimeout(() => {
+            this.speed = 1.4;
+            this.savoir_etat();
+            this.sort_base();
+
+        }, this.duree_aleatoire());
+    }
+    sEstFaitMange (){
+        this.etat = "mange";
+        this.respawn();
+        this.mangee();
+        this.sorti_de_base = false;
+    }
+
+    savoir_case(){
+        const ligne: number = Math.floor((this.y+10) / TAILLE_CASE);
+        const col: number = Math.floor((this.x+this.size/2) / TAILLE_CASE);
+        return {ligne: ligne, col: col};
+    }
 
     // **** IA deplacement ****
     choix_dir(pac: Pacman):{direction:"gauche" | "droite" | "haut" | "bas", score:number}[]{
@@ -115,20 +165,18 @@ export class Fantome{
     repere_intersection(map: number[][]): ("haut"|"bas"|"gauche"|"droite")[]{
         const directions_possible: ("haut"|"bas"|"gauche"|"droite")[] = [];
 
-        const ligne: number = Math.floor((this.y+10) / TAILLE_CASE);
-        const col: number = Math.floor((this.x+this.size/2) / TAILLE_CASE);
+        const {ligne,col} = this.savoir_case();
 
-        if (ligne > 0 && (map[ligne-1][col] === 0 || map[ligne-1][col] === 2)) directions_possible.push("haut");                    // haut
-        if (ligne+1 < map.length && (map[ligne+1][col] === 0 || map[ligne+1][col] === 2)) directions_possible.push("bas");          // bas
-        if (col > 0 && (map[ligne][col-1] === 0 || map[ligne][col-1] === 2)) directions_possible.push("gauche");                    // gauche
-        if (col+1 < map[ligne].length && (map[ligne][col+1] === 0 || map[ligne][col+1] === 2)) directions_possible.push("droite");  // droit
+        if (ligne > 0 && (map[ligne-1][col] === 0 || (!this.sorti_de_base && map[ligne-1][col] === 2))) directions_possible.push("haut");
+        if (ligne+1 < map.length && (map[ligne+1][col] === 0 || (!this.sorti_de_base && map[ligne+1][col] === 2))) directions_possible.push("bas");
+        if (col > 0 && (map[ligne][col-1] === 0 || (!this.sorti_de_base && map[ligne][col-1] === 2))) directions_possible.push("gauche");
+        if (col+1 < map[ligne].length && (map[ligne][col+1] === 0 || (!this.sorti_de_base && map[ligne][col+1] === 2))) directions_possible.push("droite");
 
         return directions_possible;
 
     }
     choisir_dir(): ("haut"|"bas"|"gauche"|"droite"){
         const dir_accessible: ("haut"|"bas"|"gauche"|"droite")[] = this.repere_intersection(Map);
-    //   const dir_pref: {direction:"gauche" | "droite" | "haut" | "bas", score:number}[] = this.choix_dir(pacman);
 
         // Enleve direction qui mene a un mur
         const direction_testees = dir_accessible.filter(direct => {
@@ -160,6 +208,7 @@ export class Fantome{
         // Trouver meilleur direction
         let meilleureDir = directions_restante[0];
         let plusCourteDistance = Infinity;
+        let plusGrandeDistance = 0;
 
         for (const direct of directions_restante){
             let testX = this.x;
@@ -173,14 +222,35 @@ export class Fantome{
             // distance vers PM
             const {d} = distance2points({x:testX, y:testY},{x:pacman.x,y:pacman.y});
 
-            if (d < plusCourteDistance){
-                plusCourteDistance = d;
-                meilleureDir = direct;
+            if (this.etat !== "peur"){
+                if (d < plusCourteDistance){
+                    plusCourteDistance = d;
+                    meilleureDir = direct;
+                }
+            }
+            else {
+                if (d > plusGrandeDistance){
+                    plusGrandeDistance = d;
+                    meilleureDir = direct;
+                }
             }
         }
 
         if (Math.random() < 0.11) return directions_restante[Math.floor( Math.random()*directions_restante.length )]
         return meilleureDir;
+    }
+
+    case_suivante_pas2():boolean{
+        let case_suiv;
+
+        const {ligne,col} = this.savoir_case();
+
+        if (this.dir === "bas") {
+            case_suiv = Map[ligne+1][col];
+        }
+
+        if (case_suiv === 2) return false;
+        return true;
     }
 
     suivre(){
@@ -190,29 +260,63 @@ export class Fantome{
         if (this.dir === "bas") this.y += this.speed;
     }
 
+    // *** GESTION de la BASE ***
+    est_dans_base(map: number[][]): boolean{
+        const {ligne,col} = this.savoir_case();
+        
+        if (map[ligne][col] !== 2) return false;
+
+        return true;
+    }
+    sort_base(){
+        const config_base = posi_depart.find(p => p.map === current_map_index);
+        if (!config_base) return;
+
+        const {col} = this.savoir_case();
+        const ligne_min = Math.min(...config_base.posi.ligne);
+        const col_min = Math.min(...config_base.posi.col)
+        const limiteY_sortie = ligne_min * TAILLE_CASE; // Le haut de la base
+        const limiteX_sortie = col_min * TAILLE_CASE;
+
+        if (current_map_index !== 0){
+            if (col < config_base?.posi.col[1] || col === config_base?.posi.col[1]){
+                this.dir = "haut";
+            }
+        }
+        else {
+            if (this.x+this.size === limiteX_sortie){
+                this.dir = "haut";
+            }
+           
+        }
+
+
+        if (this.y+20 < limiteY_sortie) {
+            this.sorti_de_base = true;
+        } else {
+            this.sorti_de_base = false;
+        }
+
+    }
 
     // **** Colisions ****
     colision_mur(map:number[][]): boolean{
-        const ligne: number = Math.floor(this.y / TAILLE_CASE);
-        const col: number = Math.floor(this.x / TAILLE_CASE);
+        const {ligne,col} = this.savoir_case();
 
         for (let i= ligne-2; i <= ligne  + 2; i++){
             for (let j= col -2; j <= col +2; j++){
                 // case existe ?
                 if (i<0 || i >= map.length || j<0 || j>= map[i].length) continue;
-                if (map[i][j] === 0 || map[i][j] === 2) continue;
+                if (map[i][j] === 0 || (map[i][j] === 2 && !this.sorti_de_base)) continue;
 
                 const murX = j * TAILLE_CASE;
                 const murY = i * TAILLE_CASE;
 
                 if (this.x+this.size > murX && this.x < murX+TAILLE_CASE && this.y < murY+TAILLE_CASE && this.y + 20 > murY) {
-                    this.cont_coli++;
-                    //console.log(this.cont_coli);
                     return true;
                 }
             }
         }
-        this.cont_coli = 0;
         return false;
     }
 
@@ -220,22 +324,22 @@ export class Fantome{
    update() {
         this.last_pos = [this.x, this.y];
 
-        // Calcul de la ligne/colonne actuelle
-        const ligne: number = Math.floor((this.y + 10) / TAILLE_CASE);
-        const col: number = Math.floor((this.x + this.size / 2) / TAILLE_CASE);
+        if (!this.sorti_de_base){
+            this.sort_base();
+        }
+        else {
+            // Calcul de la ligne/colonne actuelle
+            const {ligne,col} = this.savoir_case();
+            // Si on est à une intersection ET qu'on franchit le centre
+            const directions_possibles = this.repere_intersection(Map);
+            if (directions_possibles.length >= 2 && this.franchit_centre(col, ligne) && this.case_suivante_pas2()) {
+                if (this.last_case_decision?.ligne !== ligne || this.last_case_decision?.col !== col) {
+                    // s'aligne au centre 
+                    this.alignement_case(col, ligne);
 
-        // Si on est à une intersection ET qu'on franchit le centre
-        const directions_possibles = this.repere_intersection(Map);
-        
-        if (directions_possibles.length >= 2 && this.franchit_centre(col, ligne)) {
-            if (this.last_case_decision?.ligne !== ligne || this.last_case_decision?.col !== col) {
-                
-                // s'aligne au centre 
-                this.alignement_case(col, ligne);
-
-                this.dir = this.choisir_dir();
-
-                this.last_case_decision = { ligne, col };
+                    this.dir = this.choisir_dir();
+                    this.last_case_decision = { ligne, col };
+                }
             }
         }
 
@@ -264,15 +368,13 @@ const couleurs_fantomes = [
 ];
 
 export const posi_depart: { map: number; posi: { ligne: number[]; col: number[] } }[] = [
-    { map: 0, posi: { ligne: [21,22], col: [11, 12, 13] } },        // Map 3
-    { map: 1, posi: { ligne: [9, 10], col: [10, 11, 12, 13] } },    // Map 4
-    { map: 2, posi: { ligne: [8, 9, 10], col: [10, 11, 12, 13] } }, // Map 5
-    { map: 3, posi: { ligne: [8, 9, 10], col: [10, 11, 12, 13] } }  // Map 6
+    { map: 0, posi: { ligne: [21,22], col: [11, 12, 13] } },        // Map 0
+    { map: 1, posi: { ligne: [9, 10], col: [10, 11, 12, 13] } },    // Map 1
+    { map: 2, posi: { ligne: [8, 9, 10], col: [10, 11, 12, 13] } }, // Map 2
+    { map: 3, posi: { ligne: [8, 9, 10], col: [10, 11, 12, 13] } }  // Map 3
 ];
 
-export const place_fantome = () => {
-    fantomes.length = 0; // Vide le tableau au cas où
-
+export const place_fantome = (nbr:number) => {
     // Recherche les positions de départ de la map actuelle
     const config = posi_depart.find(p => p.map === current_map_index);
 
@@ -280,8 +382,8 @@ export const place_fantome = () => {
     const lignes = config ? config.posi.ligne : [10];
     const cols = config ? config.posi.col : [11, 12];
 
-    // Crée 4 fantômes en répartissant leurs positions de départ dans la maison
-    for (let i = 0; i < 5; i++) {
+    // Crée 5 fantômes en répartissant leurs positions de départ dans la maison
+    for (let i = 0; i < nbr; i++) {
         const ligne = lignes[i % lignes.length];
         const col = cols[i % cols.length];
 
@@ -289,9 +391,9 @@ export const place_fantome = () => {
         const y = ligne * TAILLE_CASE;
         const color = couleurs_fantomes[i];
 
-        fantomes.push(new Fantome(x, y, 22, 1.4, color));
+        if (nbr !== 1) fantomes.push(new Fantome(x, y, 22, 1.4, color));
+        else return {x: x, y: y};
     }
 };
 
-// Appelle la fonction pour placer les fantômes au démarrage
-place_fantome();
+

@@ -4,7 +4,7 @@ import { ctx, cvs } from "./variables";
 export const TAILLE_CASE = 25;
 
 // 2 => mur que peut traverser les fantomes
-export const map3: number[][] = [
+export const map0: number[][] = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1],
     [1,0,1,1,1,0,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,0,1],
@@ -31,7 +31,7 @@ export const map3: number[][] = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
-export const map4: number[][] = [
+export const map1: number[][] = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1],
     [1,0,1,1,0,1,1,1,0,1,0,1,1,0,1,0,1,1,1,0,1,1,0,1],
@@ -57,7 +57,7 @@ export const map4: number[][] = [
     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
-export const map5: number[][] = [
+export const map2: number[][] = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
     [1,0,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,0,1],
@@ -83,7 +83,7 @@ export const map5: number[][] = [
     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
-export const map6: number[][] = [
+export const map3: number[][] = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
     [1,0,1,1,1,1,0,1,1,1,1,0,0,1,1,1,1,0,1,1,1,1,0,1],
@@ -110,7 +110,7 @@ export const map6: number[][] = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
-export const maps: number[][][] = [map3,map4, map5, map6];
+export const maps: number[][][] = [map0,map1, map2, map3];
 
 export let current_map_index:number = 0;
 
@@ -124,8 +124,17 @@ export const change_map = () => {
     Map = get_map(maps);
 };
 
+let animation_ligne:number = 0;
+let conteur_frame:number = 0;
+export const met_0_anim_ligne = () => {animation_ligne = 0; conteur_frame = 0};
+
 export function draw_map(map: number[][]){
-    for (let i=0; i < map.length; i++){
+    if (animation_ligne < map.length) {
+        conteur_frame++;
+        if (conteur_frame % 5 === 0) animation_ligne++;
+    }
+
+    for (let i=0; i < animation_ligne; i++){
         for (let j=0; j < map[i].length; j++){
             if (map[i][j] === 1){
                 ctx.fillStyle = "rgb(38, 73, 255)";
@@ -153,4 +162,4 @@ export function draw_map(map: number[][]){
     }
 }
 
-export let Map: number[][] = get_map(maps);
+export let Map: number[][];
