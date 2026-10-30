@@ -1,5 +1,6 @@
 
-# 🟡 Pac-Man Web Game
+# Pac-Man 
+Web Game
 
 Un jeu Pac-Man rétro développé en **TypeScript** et **HTML5 Canvas**, propulsé par **Vite** et déployé sur **GitHub Pages**. Ce projet a été conçu pour maîtriser l'architecture orientée objet, la gestion de l'IA des fantômes et le responsive design.
 
