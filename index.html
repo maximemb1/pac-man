@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+    <head>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>pac-man</title>
+
+    <script type="module" crossorigin src="/Pac-Man/assets/index-DQDwOB29.js"></script>
+    <link rel="stylesheet" crossorigin href="/Pac-Man/assets/index-K0Y5QhY7.css">
+  </head>
+    
+    <body>
+
+      <section class="hidden" id="home">
+
+        <h1 id="titre">Pac Man</h1>
+
+        <button class="btn_jouer" id="btn_jouer">
+          <span>JOUER</span>
+        </button>
+
+      </section>
+
+      <section class="hidden" id="game">
+
+        <div class="barre_etat hidden" id="barre_etat"></div>
+
+        <canvas id="cvs"></canvas>
+
+      </section>
+
+      <section class="hidden" id="overlay">
+
+        <section class="hidden" id="GO">
+          <h1>Game Over</h1>
+          <p id="p_m_score"></p>
+
+          <button class="btn_jouer" id="btn_rejouer">
+            <span>REJOUER</span>
+          </button>
+
+        </section>
+
+        <section class="hidden" id="pause">
+          <h1>Pause</h1>
+          <p id="score_act"></p>
+          <p id="m_score"></p>
+        </section>
+         
+      </section> 
+
+    </body>
+
+</html>
