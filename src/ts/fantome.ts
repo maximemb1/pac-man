@@ -2,7 +2,7 @@
 import { ctx } from "./variables";
 import { Pacman, pacman } from "./pacman";
 import { distance2points, oppose_dir } from "./utile";
-import { TAILLE_CASE, current_map_index, Map, maps } from "./map";
+import { TAILLE_CASE, current_map_index, Map } from "./map";
 
 export class Fantome{
     static prochainId = 0;
