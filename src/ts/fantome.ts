@@ -395,5 +395,3 @@ export const place_fantome = (nbr:number) => {
         else return {x: x, y: y};
     }
 };
-
-

@@ -257,6 +257,7 @@ export class Pacman {
             if (this.booste) {
                 player.aug_score(400);
                 f.sEstFaitMange();
+                player.aug_fantome();
             }
         }
     }
@@ -301,5 +302,3 @@ export class Pacman {
 }
 
 export const pacman = new Pacman("rgb(255,221,58)");
-
-pacman.changement_direction();

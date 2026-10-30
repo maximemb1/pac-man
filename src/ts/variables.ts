@@ -34,6 +34,10 @@ const barre_etat = document.getElementById("barre_etat") as HTMLElement;
 
 const p_m_score = document.getElementById("p_m_score") as HTMLElement;
 const sect_go = document.getElementById("GO") as HTMLElement;
+const sect_pause = document.getElementById("pause") as HTMLElement;
+const score_act = document.getElementById("score_act") as HTMLElement;
+const pause_m_score = document.getElementById("m_score") as HTMLElement;
 
 export const elmt_html = {home: sect_home, game: sect_game, btn_jouer: btn_jouer, btn_rejouer: btn_rejouer,
-    etat: barre_etat, m_score: p_m_score, go: sect_go, overlay: overlay};
+    etat: barre_etat, m_score: p_m_score, go: sect_go, pause: sect_pause,overlay: overlay,
+    score_act: score_act, pause_m_score: pause_m_score};

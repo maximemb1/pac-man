@@ -29,6 +29,8 @@ export function ecran(ecran: string) {
             elmt_html.overlay.classList.add("hidden");
             elmt_html.go.classList.remove("visible");
             elmt_html.go.classList.add("hidden");
+            elmt_html.pause.classList.remove("visible");
+            elmt_html.pause.classList.add("hidden");
 
             break;
         
@@ -38,11 +40,21 @@ export function ecran(ecran: string) {
             elmt_html.go.classList.remove("hidden");
             elmt_html.go.classList.add("visible");
             affiche_m_score();
+            break;
+        
+        case "pause":
+            elmt_html.overlay.classList.remove("hidden");
+            elmt_html.overlay.classList.add("visible");
+            elmt_html.go.classList.add("hidden");
+
+            elmt_html.pause.classList.remove("hidden");
+            elmt_html.pause.classList.add("visible");
+            aff_m_score();
+            afficher_score();
+            break;
     }
 }
 
-
-ecran("home");
 
 // *** Etat de la partie ***
 export function affiche_etat_jeu(){
@@ -53,4 +65,10 @@ export function affiche_etat_jeu(){
 
 const affiche_m_score = () => {
     elmt_html.m_score.innerHTML = `Meilleur score: ${player.m_score}`;
+}
+const afficher_score = () => {
+    elmt_html.score_act.innerHTML = `Score: ${player.score}`;
+}
+const aff_m_score = () => {
+    elmt_html.pause_m_score.innerHTML = `Record: ${player.m_score}`;
 }

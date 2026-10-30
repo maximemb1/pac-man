@@ -2,7 +2,7 @@
 import { ctx} from "./variables";
 import {pacman, Pacman} from "./pacman";
 import { player } from "./Player";
-import { maps, TAILLE_CASE } from "./map";
+import { TAILLE_CASE } from "./map";
 import { position_libre } from "./utile";
 
 
@@ -47,6 +47,7 @@ export class Bille {
         if (distance < this.size + pacman.size && !this.recup) {
 
             player.aug_score(this.pts);
+            player.aug_bille();
             player.victoire();
             this.recup = true;
         };
@@ -71,7 +72,7 @@ export class BilleBoost extends Bille {
         if (distance < this.size + pacman.size && !this.recup) {
 
             player.aug_score(this.pts);
-            //player.victoire();
+            player.aug_bille();
             this.recup = true;
             pacman.prend_booste();
         }
@@ -87,14 +88,14 @@ export const boosts: BilleBoost[] = [];
 
 export const creation_bille = (Map: number[][],debug=false) => {
     const posi_libre = position_libre(Map);
-if (!debug){
-    for (const item of posi_libre) {
-        const x = Number(item.x);
-        const y = Number(item.y);
-        billes.push(new Bille(x*TAILLE_CASE+TAILLE_CASE/2, y*TAILLE_CASE+TAILLE_CASE/2, 75, "rgb(255,255,100)", 5));
+    if (!debug){
+        for (const item of posi_libre) {
+            const x = Number(item.x);
+            const y = Number(item.y);
+            billes.push(new Bille(x*TAILLE_CASE+TAILLE_CASE/2, y*TAILLE_CASE+TAILLE_CASE/2, 75, "rgb(255,255,100)", 5));
+        }
     }
-}
-else billes.push(new Bille(5*TAILLE_CASE+TAILLE_CASE/2, TAILLE_CASE+TAILLE_CASE/2,100000000, "rgb(255,255,100)",5));
+    else billes.push(new Bille(5*TAILLE_CASE+TAILLE_CASE/2, TAILLE_CASE+TAILLE_CASE/2,100000000, "rgb(255,255,100)",5));
 }
 
 export const creation_boost = (Map: number[][]) => {
@@ -121,4 +122,3 @@ export const creation_boost = (Map: number[][]) => {
         }
     }
 }
-//new Bille(50, 50, 75, "rgb(255,255,100)", 5)
