@@ -165,6 +165,14 @@ window.addEventListener("touchend", (e) => {
     }
 }, { passive: true });
 
+// *** Empèche reload de la page ***
+window.addEventListener("touchmove", (e) => {
+    // Si le jeu est actif, on empêche le navigateur de scroller ou de rafraîchir la page
+    if (etat_jeu.actif) {
+        e.preventDefault(); 
+    }
+}, { passive: false });
+
 // *** Gestion pause ***
 window.addEventListener("keydown", (e) => {
     if (e.key === "p" || e.key === "Enter" || e.code === "Space"){
