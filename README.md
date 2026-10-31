@@ -2,6 +2,8 @@
 
 Un jeu Pac-Man rétro développé en **TypeScript** et **HTML5 Canvas**, propulsé par **Vite** et déployé sur **GitHub Pages**. Ce projet a été conçu pour maîtriser l'architecture orientée objet, la gestion de l'IA des fantômes et le responsive design.
 
+
+
 ## ✨ Fonctionnalités
 
 - 🕹️ **Gameplay fidèle** : Gestion des déplacements sur grille, collisions de murs, pac-gommes et bonus de super-pac-man.
@@ -11,6 +13,8 @@ Un jeu Pac-Man rétro développé en **TypeScript** et **HTML5 Canvas**, propuls
 - 🗺️ **Multiples cartes** : Système de transition et d'animation entre plusieurs niveaux/maps.
 - ⏸️ **Système de Pause** : Metter la pause ou reprener le jeu a tout moment avec les touches *espace*, *entrée* et *p*.
 
+
+
 ## 🛠️ Technique
 
 - **Langage** : TypeScript
@@ -18,6 +22,8 @@ Un jeu Pac-Man rétro développé en **TypeScript** et **HTML5 Canvas**, propuls
 - **Outil de build** : Vite
 - **Hébergement** : GitHub Pages
 - **Styles** : CSS3 (Variables, Clamp, Animations dynamiques)
+
+
 
 ## 📁 Structure du Projet
 
@@ -39,12 +45,17 @@ src/
 index.html          # Page principale du jeu
 ```
 
+
+
 ## ☑️ Commencer
 
-[Vous pouver y jouer directement dans un navigateur](https://maximemb1.gituhb.io/pac-man/).
+[Vous pouver y jouer directement dans un navigateur](https://maximemb1.github.io/pac-man/).
+
+---
+
 
 ### Le lancer en local
-
+---
 installer les dépendances:
 
 ```bash
