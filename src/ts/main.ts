@@ -151,16 +151,16 @@ window.addEventListener("touchend", (e) => {
     // On vérifie si le mouvement horizontal est plus grand que vertical
     if (Math.abs(diffX) > Math.abs(diffY)) {
         if (diffX > 30) {
-            pacman.direction = "droite";
+            pacman.pro_dir = "droite";
         } else if (diffX < -30) {
-            pacman.direction = "gauche";
+            pacman.pro_dir = "gauche";
         }
     } else {
         // Mouvement vertical
         if (diffY > 30) {
-            pacman.direction = "bas";
+            pacman.pro_dir = "bas";
         } else if (diffY < -30) {
-            pacman.direction = "haut";
+            pacman.pro_dir = "haut";
         }
     }
 }, { passive: true });

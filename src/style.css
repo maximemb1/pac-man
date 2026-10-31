@@ -85,11 +85,14 @@ p{
 }
 
 #titre{
-  font-size: clamp(2.5rem, 7.4vw, 4.5rem);
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-250%);
+  font-size: clamp(2.5rem, 7.2vw, 4.5rem);
+   transform: translateY(-50%);
+}
+@media (max-width: 500px) {
+  #titre{
+    font-size: clamp(2.2rem, 6.5vw, 3rem);
+    letter-spacing: 0;
+  }
 }
 /* btn home */
 .btn_jouer{
