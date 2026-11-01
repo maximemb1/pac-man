@@ -38,6 +38,9 @@ const sect_pause = document.getElementById("pause") as HTMLElement;
 const score_act = document.getElementById("score_act") as HTMLElement;
 const pause_m_score = document.getElementById("m_score") as HTMLElement;
 
+const btn_pause = document.getElementById("btn_pause") as HTMLButtonElement;
+const btn_reprendre = document.getElementById("btn_reprendre") as HTMLButtonElement;
+
 export const elmt_html = {home: sect_home, game: sect_game, btn_jouer: btn_jouer, btn_rejouer: btn_rejouer,
     etat: barre_etat, m_score: p_m_score, go: sect_go, pause: sect_pause,overlay: overlay,
-    score_act: score_act, pause_m_score: pause_m_score};
+    score_act: score_act, pause_m_score: pause_m_score, btn_pause:btn_pause, btn_reprendre: btn_reprendre};

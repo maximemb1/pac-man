@@ -193,8 +193,62 @@ p{
   
   z-index: 2;
 }
+#btn_pause{
+  all: unset;
+  font-size: clamp(1.2rem, 3.2vw, 2.8rem);
+  padding: 0.5rem 0.5rem;
+  background: var(--ui);
+  color: var(--text-muted);
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  border-radius: 100px;
+  cursor: pointer;
 
+  box-shadow: 0 0 1px var(--wall);
 
+}
+#btn_pause:hover {
+ animation: btn_pause_hover 1s ease-in-out infinite alternate;
+  box-shadow: 0 0 6px var(--pacman);
+}
+@keyframes btn_pause_hover {
+  100% {
+    border-radius: 12px 12px 12px 12px;
+  }
+  75%{
+    border-radius: 12px 25px 12px 12px;
+  }
+  50% {
+    border-radius: 12px 25px 12px 25px;
+  }
+  25%{
+    border-radius: 12px 25px 25px 25px
+  }
+  0% {
+    border-radius: 100px;
+  }
+}
+#btn_pause:active {
+  animation: btn_pause_active 0.2s ease-in-out;
+}
+@keyframes btn_pause_active {
+  0%{
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  70%{
+    transform: scale(0.92);
+  }
+  85%{
+    transform:scale(1.06);
+  }
+  100%{
+    transform: scale(1);
+  }
+}
 /* OVERLAY */
 #overlay{
   display: flex;
@@ -250,6 +304,9 @@ p{
 }
 #m_score, #score_act{
   margin-top: 2rem;
+}
+#btn_reprendre{
+  font-family: 'crackman';
 }
 /* ECRAN */
 .visible{

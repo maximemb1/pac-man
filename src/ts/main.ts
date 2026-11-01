@@ -176,15 +176,21 @@ window.addEventListener("touchmove", (e) => {
 // *** Gestion pause ***
 window.addEventListener("keydown", (e) => {
     if (e.key === "p" || e.key === "Enter" || e.code === "Space"){
+        pause();
+    }
+});
+elmt_html.btn_pause.addEventListener("click", () => {pause()});
+elmt_html.btn_reprendre.addEventListener("click", () => {pause()});
 
-        if (!etat_jeu.pause){
+const pause = () => {
+    if (!etat_jeu.pause){
             etat_jeu.pause = true;
 
             etat_jeu.actif = false;
 
             ecran("pause");
         }
-        else {
+    else {
             etat_jeu.pause = false;
 
             etat_jeu.actif = true;
@@ -192,6 +198,4 @@ window.addEventListener("keydown", (e) => {
             ecran("game");
             gameloop();
         }
-
-    }
-})
+}
