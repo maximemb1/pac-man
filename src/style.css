@@ -111,6 +111,10 @@ p{
 
   box-shadow: 0 0 1px var(--wall);
 }
+.btn_maxhub{
+  border-radius: 2px 3rem;
+  text-decoration: none;
+}
 .btn_jouer:hover > span {
   color: var(--wall-glow);
 }
